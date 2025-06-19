@@ -41,3 +41,18 @@ See [`privacy.md`](./privacy.md) for full policy.
 ## 📄 License
 
 This project is licensed under the [MIT License](./LICENSE).
+
+---
+
+## 📢 Disclaimer 📝
+
+The Impact Factor Finder extension provides approximate journal impact values based on public datasets and heuristic algorithms. Please note the following:
+
+- 📊 **Data Sources**: The journal metrics used are compiled from publicly available academic datasets and third-party repositories, not from proprietary databases like Clarivate’s JCR.
+- 🧠 **Heuristic Matching**: Journal titles are matched using string similarity and normalization algorithms, which may occasionally result in mismatches.
+- ⏳ **Update Frequency**: The dataset may not always reflect the most recent updates or indexing changes in real-time.
+- ⚠️ **Accuracy Notice**: Displayed impact factors are estimates and may not match official values exactly.
+- ✅ **Usage Guidance**: This tool is intended as a **quick reference** and supplementary aid for researchers, not a definitive or authoritative source of journal rankings.
+
+We recommend using this extension in conjunction with trusted academic databases for informed publication decisions or evaluations.
+
