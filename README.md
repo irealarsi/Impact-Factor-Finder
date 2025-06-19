@@ -44,6 +44,19 @@ This project is licensed under the [MIT License](./LICENSE).
 
 ---
 
+## Technology Stack 🛠️
+
+| Layer           | Details                                                                 |
+|-----------------|-------------------------------------------------------------------------|
+| Language        | JavaScript (ES6)                                                        |
+| Platform        | Chrome Extension APIs (`chrome.runtime`, `chrome.storage`, `content_s...|
+| Data Sources    | Manually compiled CSV of journal metrics (public data, static file)     |
+| Algorithms      | DOM manipulation • String matching • Title normalization                |
+| Icon Handling   | Local PNG icons (16x16, 48x48, 128x128)                                 |
+| Data Storage    | Local CSV file accessed via `chrome.runtime.getURL()`                   |
+| Privacy         | Fully local processing, no data collection                              |
+
+
 ## 📢 Disclaimer 📝
 
 The Impact Factor Finder extension provides approximate journal impact values based on public datasets and heuristic algorithms. Please note the following:
