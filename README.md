@@ -1,4 +1,5 @@
 # Impact Factor Finder – Chrome Extension
+[![Get it on Chrome Web Store](https://chromewebstore.google.com/detail/impact-factor-finder/damonelhcfhpjhgnikakjpjinakfejhe?authuser=0&hl=en-GB)
 
 ![Banner](./assets/Banner.png)
 
