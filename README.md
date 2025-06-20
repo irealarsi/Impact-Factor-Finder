@@ -1,6 +1,7 @@
 # Impact Factor Finder – Chrome Extension
 **Impact Factor Finder** is a lightweight Chrome extension that automatically displays approximate journal impact factors next to each publication on Google Scholar profiles.
-[![Available in the Chrome Web Store](./assets/chrome-extension.png)](https://chromewebstore.google.com/detail/impact-factor-finder/damonelhcfhpjhgnikakjpjinakfejhe?authuser=0&hl=en-GB)
+
+[(./assets/chrome-extension.png)](https://chromewebstore.google.com/detail/impact-factor-finder/damonelhcfhpjhgnikakjpjinakfejhe?authuser=0&hl=en-GB)
 
 
 ![Banner](./assets/Banner.png)
