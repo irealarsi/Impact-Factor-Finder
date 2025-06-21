@@ -53,7 +53,6 @@ function annotateIF() {
     );
 
     elements.forEach(el => {
-        // Remove previous IFs
         const spans = el.querySelectorAll('span');
         spans.forEach(span => {
             if (span.textContent.includes('IF:')) {
@@ -75,15 +74,7 @@ function annotateIF() {
         const cleaned = extractJournalName(journalText);
         let ifVal = journalIF[cleaned];
 
-        // Fuzzy fallback: match on prefix if direct match fails
-        if (ifVal === undefined && cleaned.length > 5) {
-            const matchKey = Object.keys(journalIF).find(key => cleaned.startsWith(key));
-            if (matchKey) {
-                ifVal = journalIF[matchKey];
-            }
-        }
-
-        // Show IF for any valid journal in CSV
+       
         if (typeof ifVal === "number" && !isNaN(ifVal) && isLikelyJournal(cleaned)) {
             const span = document.createElement('span');
             span.textContent = ` | IF: ${ifVal.toFixed(2)}`;
@@ -91,51 +82,41 @@ function annotateIF() {
             span.style.fontWeight = 'bold';
             span.setAttribute('data-if-extension', 'true');
             el.appendChild(span);
+
+            // Mark for Total IF use
+            el.setAttribute('data-if-used', 'true');
+            el.setAttribute('data-if-value', ifVal.toFixed(2));
+            el.setAttribute('data-if-cleaned-name', cleaned);
+        } else {
+            el.removeAttribute('data-if-used');
+            el.removeAttribute('data-if-value');
+            el.removeAttribute('data-if-cleaned-name');
         }
     });
 }
 
-// Remove previous and insert new Total IF (only once!)
+// Total IF calculation using only visible/annotated journals
 function insertTotalIF() {
-    // Remove any previous Total Author IF blocks
     document.querySelectorAll('.gscholar-total-if-block').forEach(el => el.remove());
 
     const elements = document.querySelectorAll(
-        '.gsc_a_t .gs_gray:not(.gs_oph), .gsc_a_t .gs_gray.badged'
+        '.gsc_a_t .gs_gray[data-if-used="true"]'
     );
 
-    const matched = [];
+    const ifValues = [];
+    const journalNamesForDebug = [];
     elements.forEach(el => {
-        let journalText = '';
-        if (el.classList.contains('badged')) {
-            el.childNodes.forEach(node => {
-                if (node.nodeType === Node.TEXT_NODE) {
-                    journalText += node.textContent.trim() + ' ';
-                }
-            });
-        } else {
-            journalText = el.textContent.trim();
-        }
+        const cleanedName = el.getAttribute('data-if-cleaned-name');
+        const ifValue = parseFloat(el.getAttribute('data-if-value'));
 
-        const cleaned = extractJournalName(journalText);
-        let ifVal = journalIF[cleaned];
-        let matchKey = cleaned;
-
-        // Fuzzy fallback: match on prefix if direct match fails
-        if (ifVal === undefined && cleaned.length > 5) {
-            matchKey = Object.keys(journalIF).find(key => cleaned.startsWith(key));
-            if (matchKey) {
-                ifVal = journalIF[matchKey];
-            }
-        }
-
-        // Only add if valid and not already counted
-        if (typeof ifVal === "number" && !isNaN(ifVal) && isLikelyJournal(matchKey) && !matched.includes(matchKey)) {
-            matched.push(matchKey);
+        if (cleanedName && !isNaN(ifValue)) {
+            ifValues.push(ifValue);
+            journalNamesForDebug.push(cleanedName);
         }
     });
 
-    const totalIF = matched.reduce((acc, key) => acc + journalIF[key], 0);
+  
+    const totalIF = ifValues.reduce((acc, value) => acc + value, 0);
 
     const wrapper = document.createElement('div');
     wrapper.className = 'gscholar-total-if-block';
@@ -149,10 +130,11 @@ function insertTotalIF() {
     wrapper.appendChild(totalDiv);
 
     const note = document.createElement('div');
-    note.textContent = 'Note: The Impact Factor values used are based on a manually compiled dataset of publicly observed journal metrics. These scores are approximate and for informational use only.';
-    note.style.color = '#999999';
+    note.textContent = 'Note: The Impact Factor values used are based on a manually compiled dataset of publicly observed journal metrics (WoS JCR 2025). These scores are approximate, for informational use only, and may not reflect official Clarivate JCR data.';
+    note.style.color = '#ff9900';
     note.style.fontSize = '12px';
     note.style.marginTop = '4px';
+    note.style.fontWeight = 'bold';
     wrapper.appendChild(note);
 
     const target1 = document.querySelector('.gsc_rsb_st');
@@ -168,33 +150,45 @@ function insertTotalIF() {
     }
 }
 
-// Allow almost all actual journals, block only clear non-journal lines
+// Filter non-journal entries
 function isLikelyJournal(str) {
-    return str.length > 6;
+    const nonJournalKeywords = [
+        'conference',
+        'proceedings',
+        'workshop',
+        'symposium',
+        'book',
+        'chapter',
+        'thesis',
+        'poster',
+        'patent'
+    ];
+    return !nonJournalKeywords.some(k => str.includes(k));
 }
 
-// Normalize journal names
+// Normalize text for matching
 function cleanString(str) {
     return str
         .toLowerCase()
         .replace(/&/g, 'and')
-        .replace(/[-–—]/g, ' ')  // Replace hyphens with space
+        .replace(/[-–—]/g, ' ')
         .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
         .replace(/[\u{1F600}-\u{1F6FF}\u{1F300}-\u{1F5FF}]/gu, '')
-        .replace(/[^a-z0-9\s]/g, '')  // remove punctuation except space
+        .replace(/[^a-z0-9\s]/g, '')
         .replace(/\s+/g, ' ')
         .trim();
 }
+
+// Extract and clean journal names from text
 function extractJournalName(sourceText) {
     let cleaned = cleanString(
         sourceText
-            .replace(/\([^)]*\)/g, '')     // remove (3), (suppl_1), etc.
-            .replace(/[0-9]{1,4}/g, '')    // remove digits
-            .replace(/[,]/g, '')           // remove commas
+            .replace(/\([^)]*\)/g, '')
+            .replace(/[0-9]{1,4}/g, '')
+            .replace(/[,]/g, '')
             .trim()
     );
 
-    // Remove trailing single-letter word (like 'b', 'a')
     const parts = cleaned.split(' ');
     if (parts.length > 1 && parts[parts.length - 1].length === 1) {
         parts.pop();
