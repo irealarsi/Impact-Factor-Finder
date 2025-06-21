@@ -1,16 +1,31 @@
 {
   "manifest_version": 3,
   "name": "Impact Factor Finder",
-  "version": "1.0",
+  "version": "1.2",
   "description": "Displays Impact Factor next to each publication on Google Scholar profiles.",
-  "permissions": ["scripting", "storage"],
   "host_permissions": [
-    "https://scholar.google.com/*"
+    "https://scholar.google.com/*",
+    "https://scholar.google.com.pk/*",
+    "https://scholar.google.com.sg/*",
+    "https://scholar.google.co.in/*",
+    "https://scholar.google.co.uk/*",
+    "https://scholar.google.fr/*",
+    "https://scholar.google.de/*"
   ],
+  "permissions": [],
   "content_scripts": [
     {
-      "matches": ["https://scholar.google.com/citations?*"],
-      "js": ["content.js"]
+      "matches": [
+        "https://scholar.google.com/*",
+        "https://scholar.google.com.pk/*",
+        "https://scholar.google.com.sg/*",
+        "https://scholar.google.co.in/*",
+        "https://scholar.google.co.uk/*",
+        "https://scholar.google.fr/*",
+        "https://scholar.google.de/*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_idle"
     }
   ],
   "web_accessible_resources": [
@@ -21,15 +36,15 @@
   ],
   "action": {
     "default_icon": {
-      "16": "icon16.png",
-      "48": "icon48.png",
-      "128": "icon128.png"
+      "16": "assets/icon16.png",
+      "48": "assets/icon48.png",
+      "128": "assets/icon128.png"
     },
     "default_title": "Impact Factor Finder"
   },
   "icons": {
-    "16": "icon16.png",
-    "48": "icon48.png",
-    "128": "icon128.png"
+    "16": "assets/icon16.png",
+    "48": "assets/icon48.png",
+    "128": "assets/icon128.png"
   }
 }
